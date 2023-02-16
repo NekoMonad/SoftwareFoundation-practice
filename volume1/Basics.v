@@ -259,5 +259,59 @@ Proof.
     - reflexivity.
 Qed.
 
+(* Practice 11: 3 星, standard, optional (andb_eq_orb) *)
+Theorem andb_eq_orb :
+    forall (b c : bool),
+    (andb b c = orb b c) ->
+    b = c.
+Proof.
+    intros b c H.
+    assert (HA: andb true c = c). reflexivity.
+    assert (HO: orb false c = c). reflexivity.
+    destruct b.
+    rewrite <- HA.
+    rewrite -> H.
+    reflexivity.
+    rewrite <- HO.
+    rewrite <- H.
+    reflexivity.
+Qed.
+
+(* Practice 12: 3 星, standard (binary) *)
+Inductive bin : Type :=
+    | Z
+    | A (n : bin)
+    | B (n : bin).
+
+Fixpoint incr (m:bin) : bin :=
+    match m with
+    | Z => B Z
+    | A m' => B m'
+    | B m' => A (incr m')
+    end.
+
+Fixpoint bin_to_nat (m:bin) : nat :=
+    match m with
+    | Z => O
+    | A m' => 2 * (bin_to_nat m')
+    | B m' => 1 + 2 * (bin_to_nat m')
+    end.
+
+Example test_bin_incr1 : (incr (B Z)) = A (B Z).
+Proof. simpl. reflexivity. Qed.
+Example test_bin_incr2 : (incr (A (B Z))) = B (B Z).
+Proof. simpl. reflexivity. Qed.
+Example test_bin_incr3 : (incr (B (B Z))) = A (A (B Z)).
+Proof. simpl. reflexivity. Qed.
+Example test_bin_incr4 : bin_to_nat (A (B Z)) = 2.
+Proof. simpl. reflexivity. Qed.
+Example test_bin_incr5 :
+            bin_to_nat (incr (B Z)) = 1 + bin_to_nat (B Z).
+Proof. simpl. reflexivity. Qed.
+Example test_bin_incr6 :
+            bin_to_nat (incr (incr (B Z))) = 2 + bin_to_nat (B Z).
+Proof. simpl. reflexivity. Qed.
+
+
 
 

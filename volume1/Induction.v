@@ -210,3 +210,66 @@ Proof.
       rewrite -> mult_plus_distr_r.
       reflexivity.
 Qed.
+
+(* Practice6: 2 星, standard, optional (eqb_refl) *)
+Theorem eqb_refl : forall n : nat,
+    true = (n =? n).
+Proof.
+    intros n.
+    induction n as [| n' IHn'].
+    - simpl. reflexivity.
+    - simpl. rewrite <- IHn'. reflexivity.
+Qed.
+
+(* Practice7: 2 星, standard, optional (plus_swap') *)
+Theorem plus_swap' : forall n m p : nat,
+    n + (m + p) = m + (n + p).
+Proof.
+    intros n m p.
+    rewrite -> plus_assoc.
+    rewrite -> plus_assoc.
+    replace (n + m) with (m + n).
+    reflexivity.
+    rewrite -> plus_comm.
+    reflexivity.
+Qed.
+
+(* Practice8: 3 星, standard, recommended (binary_commute) *)
+Theorem bin_to_nat_pres_incr: forall n: bin, 
+    bin_to_nat (incr n) = 1 + (bin_to_nat n).
+Proof.
+    intros n.
+    induction n as [| a' IHa' | b' IHb'].
+    - simpl. reflexivity.
+    - simpl. rewrite <- plus_n_0. reflexivity.
+    - simpl. 
+      rewrite <- plus_n_0.
+      rewrite <- plus_n_0. 
+      rewrite -> IHb'.
+      simpl.
+      assert (H: forall a: nat, S (a + S a) = S (S a + a)).
+      { intros a. rewrite -> plus_comm. reflexivity. }
+      rewrite -> H. simpl. reflexivity.
+Qed.
+
+(* Practice9: 5 星, advanced (binary_inverse) *)
+Fixpoint nat_to_bin (n: nat): bin :=
+    match n with
+    | O => Z
+    | S n' => incr (nat_to_bin n')
+    end.
+
+Theorem nat_bin_nat : forall n, bin_to_nat (nat_to_bin n) = n.
+Proof.
+    intros n.
+    induction n as [| n' IHn'].
+    - simpl. reflexivity.
+    - simpl. 
+      rewrite -> bin_to_nat_pres_incr. 
+      simpl.
+      rewrite -> IHn'.
+      reflexivity.
+Qed.
+
+(* TODO: 完成 (b) 和 (c) *)
+(* 部分证明参考了https://github.com/fabriceleal/Software-Foundations-Solutions/blob/master/Induction.v *)
